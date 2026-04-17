@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本事多媒體 — AI Agent Office</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --bg: #0c0c1d;
+  --panel: #14142a;
+  --border: #2a2a5a;
+  --text: #c8c8e8;
+  --dim: #6868a8;
+  --accent: #f5c518;
+  --green: #4ade80;
+  --red: #f87171;
+  --blue: #60a5fa;
+  --purple: #c084fc;
+  --orange: #fb923c;
+  --pink: #f472b6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(180deg, #1a1a3a 0%, var(--panel) 100%);
+  border-bottom: 2px solid var(--border);
+  padding: 16px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header h1 {
+  font-size: 14px;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(245,197,24,0.5);
+}
+.header h1 span { color: var(--text); font-size: 10px; }
+.header-right { font-size: 8px; color: var(--dim); text-align: right; }
+.header-right .time { color: var(--green); font-size: 10px; }
+
+/* Layout */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  grid-template-rows: auto 1fr;
+  height: calc(100vh - 56px);
+  gap: 0;
+}
+
+/* Agent Grid */
+.agents-area {
+  grid-row: 1 / 3;
+  padding: 24px;
+  display: flex; flex-direction: column;
+}
+
+.agents-title {
+  font-size: 10px;
+  color: var(--dim);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+
+/* Agent Card */
+.agent-card {
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+.agent-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(245,197,24,0.2);
+}
+.agent-card.working { border-color: var(--green); }
+.agent-card.working .status-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+.status-dot {
+  position: absolute; top: 8px; right: 8px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--dim);
+  transition: all 0.3s;
+}
+.status-dot.working {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Pixel Art Character */
+.pixel-art {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.pixel-char {
+  width: 64px; height: 80px;
+  position: relative;
+  image-rendering: pixelated;
+}
+
+/* Agent Info */
+.agent-info {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.agent-name {
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.agent-role {
+  font-size: 7px;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+.agent-task {
+  font-size: 7px;
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 24px;
+}
+.agent-task.idle { color: var(--dim); font-style: italic; }
+
+/* Tooltip */
+.agent-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%; left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a3a;
+  border: 1px solid var(--accent);
+  padding: 10px;
+  border-radius: 4px;
+  width: 220px;
+  z-index: 100;
+  font-size: 7px;
+  line-height: 1.8;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.agent-card:hover .agent-tooltip { display: block; }
+.tooltip-title { color: var(--accent); margin-bottom: 6px; font-size: 8px; }
+.tooltip-row { display: flex; justify-content: space-between; }
+.tooltip-label { color: var(--dim); }
+.tooltip-value { color: var(--text); }
+
+/* Side Panel */
+.side-panel {
+  background: var(--panel);
+  border-left: 2px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+}
+.panel-tab {
+  flex: 1;
+  padding: 10px;
+  font-size: 7px;
+  text-align: center;
+  color: var(--dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.panel-tab:hover { color: var(--text); }
+.panel-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+.panel-content::-webkit-scrollbar { width: 4px; }
+.panel-content::-webkit-scrollbar-track { background: var(--bg); }
+.panel-content::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* Task Items */
+.task-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 8px;
+  font-size: 7px;
+  line-height: 1.8;
+}
+.task-item .task-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.task-status {
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 6px;
+}
+.task-status.active { background: rgba(74,222,128,0.2); color: var(--green); }
+.task-status.pending { background: rgba(251,146,60,0.2); color: var(--orange); }
+.task-status.done { background: rgba(96,165,250,0.2); color: var(--blue); }
+
+/* Log Items */
+.log-item {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(42,42,90,0.5);
+  font-size: 7px;
+  line-height: 1.6;
+}
+.log-time { color: var(--dim); margin-right: 8px; }
+.log-from { color: var(--orange); }
+.log-to { color: var(--blue); }
+.log-arrow { color: var(--dim); margin: 0 4px; }
+.log-msg { color: var(--text); }
+
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  gap: 16px;
+  font-size: 7px;
+}
+.stat { display: flex; align-items: center; gap: 4px; }
+.stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Mail animation */
+.mail {
+  position: fixed;
+  font-size: 16px;
+  z-index: 500;
+  animation: flyMail 2s ease-in-out forwards;
+  pointer-events: none;
+}
+@keyframes flyMail {
+  0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+  20% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: scale(0.5) translateY(-20px); }
+}
+
+/* Canvas for pixel characters */
+canvas.pixel-canvas {
+  image-rendering: pixelated;
+  width: 64px; height: 80px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏢 本事多媒體 <span>AI AGENT OFFICE</span></h1>
+  <div class="header-right">
+    <div class="time" id="clock">--:--:--</div>
+    <div>AGENTS: <span id="agentCount">6</span> | ACTIVE: <span id="activeCount" style="color:var(--green)">0</span></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="agents-area">
+    <div class="agents-title">— AGENT ROSTER —</div>
+    <div class="agents-grid" id="agentsGrid"></div>
+  </div>
+
+  <div class="side-panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active" data-tab="tasks">📋 TASKS</div>
+      <div class="panel-tab" data-tab="log">📡 LOG</div>
+      <div class="panel-tab" data-tab="comms">💬 COMMS</div>
+    </div>
+    <div class="panel-content" id="panelContent"></div>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-dot" style="background:var(--green)"></div> <span id="statWorking">0</span> WORKING</div>
+      <div class="stat"><div class="stat-dot" style="background:var(--dim)"></div> <span id="statIdle">6</span> IDLE</div>
+      <div class="stat"><div class="stat-dot" style="background:var(--orange)"></div> <span id="statPending">0</span> PENDING</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Agent Data ──
+const AGENTS = [
+  { id: 'boss', name: '老闆 Boss', role: 'CEO 總指揮', color: '#f5c518', emoji: '🎩',
+    sprite: { skin: '#f5d6a8', hair: '#3a2a1a', hat: '#f5c518', body: '#2a2a5a', acc: '#f5c518' }},
+  { id: 'mozi', name: '墨子 Mozi', role: '內容總監', color: '#60a5fa', emoji: '✍️',
+    sprite: { skin: '#f5d6a8', hair: '#1a1a2a', hat: null, body: '#2a4a8a', acc: '#ffffff' }},
+  { id: 'iris', name: '彩虹 Iris', role: '設計師 視覺', color: '#c084fc', emoji: '🎨',
+    sprite: { skin: '#f5d6a8', hair: '#c084fc', hat: null, body: '#4a2a6a', acc: '#c084fc' }},
+  { id: 'radar', name: '雷達 Radar', role: '行銷專員', color: '#fb923c', emoji: '🔍',
+    sprite: { skin: '#f5d6a8', hair: '#5a3a1a', hat: '#3a3a3a', body: '#5a3a1a', acc: '#fb923c' }},
+  { id: 'goldie', name: '阿金 Goldie', role: '業務專員', color: '#4ade80', emoji: '💰',
+    sprite: { skin: '#f5d6a8', hair: '#1a1a1a', hat: null, body: '#1a4a2a', acc: '#4ade80' }},
+  { id: 'pip', name: '小管家 Pip', role: '行政助理', color: '#f472b6', emoji: '📋',
+    sprite: { skin: '#f5d6a8', hair: '#8a5a3a', hat: null, body: '#5a2a4a', acc: '#f472b6' }},
+];
+
+// ── State ──
+let agentStates = {};
+let tasks = [];
+let logs = [];
+let comms = [];
+let activeTab = 'tasks';
+
+// ── Pixel Art Renderer ──
+function drawPixelChar(canvas, sprite, isWorking) {
+  const ctx = canvas.getContext('2d');
+  const w = 16, h = 20;
+  canvas.width = w; canvas.height = h;
+  ctx.clearRect(0, 0, w, h);
+
+  const s = sprite;
+  const c = (x, y, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, 1, 1); };
+
+  // Hat (if any)
+  if (s.hat) {
+    for (let x = 5; x <= 10; x++) c(x, 1, s.hat);
+    for (let x = 4; x <= 11; x++) c(x, 2, s.hat);
+    for (let x = 4; x <= 11; x++) c(x, 3, s.hat);
+  }
+
+  // Hair
+  for (let x = 5; x <= 10; x++) c(x, s.hat ? 4 : 2, s.hair);
+  for (let x = 4; x <= 11; x++) c(x, s.hat ? 5 : 3, s.hair);
+  c(4, s.hat ? 6 : 4, s.hair); c(11, s.hat ? 6 : 4, s.hair);
+
+  // Face
+  const fy = s.hat ? 6 : 4;
+  for (let x = 5; x <= 10; x++) {
+    c(x, fy, s.skin);
+    c(x, fy + 1, s.skin);
+    c(x, fy + 2, s.skin);
+  }
+  c(4, fy + 1, s.skin); c(11, fy + 1, s.skin);
+
+  // Eyes
+  const ey = fy + 1;
+  const eyeColor = isWorking ? '#ffffff' : '#6868a8';
+  c(6, ey, eyeColor); c(9, ey, eyeColor);
+  if (isWorking) { c(6, ey, '#00ff88'); c(9, ey, '#00ff88'); }
+
+  // Mouth
+  c(7, fy + 2, '#aa6644'); c(8, fy + 2, '#aa6644');
+
+  // Body
+  const by = fy + 3;
+  for (let x = 4; x <= 11; x++) {
+    c(x, by, s.body);
+    c(x, by + 1, s.body);
+    c(x, by + 2, s.body);
+    c(x, by + 3, s.body);
+  }
+
+  // Accessory on body
+  c(7, by + 1, s.acc); c(8, by + 1, s.acc);
+
+  // Arms
+  c(3, by + 1, s.skin); c(12, by + 1, s.skin);
+  c(3, by + 2, s.skin); c(12, by + 2, s.skin);
+
+  // Legs
+  for (let y = by + 4; y <= by + 5; y++) {
+    c(5, y, '#1a1a3a'); c(6, y, '#1a1a3a');
+    c(9, y, '#1a1a3a'); c(10, y, '#1a1a3a');
+  }
+
+  // Shoes
+  c(4, by + 6, '#3a3a3a'); c(5, by + 6, '#3a3a3a'); c(6, by + 6, '#3a3a3a');
+  c(9, by + 6, '#3a3a3a'); c(10, by + 6, '#3a3a3a'); c(11, by + 6, '#3a3a3a');
+}
+
+// ── Build UI ──
+function buildAgents() {
+  const grid = document.getElementById('agentsGrid');
+  grid.innerHTML = '';
+
+  AGENTS.forEach(agent => {
+    const state = agentStates[agent.id] || { status: 'idle', task: null, tasksDone: 0 };
+    const isWorking = state.status === 'working';
+
+    const card = document.createElement('div');
+    card.className = `agent-card ${isWorking ? 'working' : ''}`;
+    card.id = `card-${agent.id}`;
+
+    card.innerHTML = `
+      <div class="status-dot ${isWorking ? 'working' : ''}"></div>
+      <div class="pixel-art">
+        <canvas class="pixel-canvas" id="canvas-${agent.id}"></canvas>
+      </div>
+      <div class="agent-info">
+        <div class="agent-name">${agent.emoji} ${agent.name}</div>
+        <div class="agent-role">${agent.role}</div>
+        <div class="agent-task ${isWorking ? '' : 'idle'}">
+          ${isWorking ? state.task : 'IDLE — 等待任務...'}
+        </div>
+      </div>
+      <div class="agent-tooltip">
+        <div class="tooltip-title">${agent.name}</div>
+        <div class="tooltip-row"><span class="tooltip-label">狀態</span><span class="tooltip-value">${isWorking ? '🟢 工作中' : '⚪ 閒置'}</span></div>
+        <div class="tooltip-row"><span class="tooltip-label">任務</span><span class="tooltip-value">${state.task || '無'}</span></div>
+        <div class="tooltip-row"><span class="tooltip-label">已完成</span><span class="tooltip-value">${state.tasksDone} 件</span></div>
+        <div class="tooltip-row"><span class="tooltip-label">效率</span><span class="tooltip-value">${isWorking ? '100%' : '—'}</span></div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+    // Draw pixel art
+    setTimeout(() => {
+      const canvas = document.getElementById(`canvas-${agent.id}`);
+      if (canvas) drawPixelChar(canvas, agent.sprite, isWorking);
+    }, 50);
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  let working = 0, idle = 0, pending = 0;
+  AGENTS.forEach(a => {
+    const s = agentStates[a.id] || { status: 'idle' };
+    if (s.status === 'working') working++;
+    else idle++;
+  });
+  pending = tasks.filter(t => t.status === 'pending').length;
+
+  document.getElementById('activeCount').textContent = working;
+  document.getElementById('statWorking').textContent = working;
+  document.getElementById('statIdle').textContent = idle;
+  document.getElementById('statPending').textContent = pending;
+}
+
+function renderPanel() {
+  const panel = document.getElementById('panelContent');
+  if (activeTab === 'tasks') {
+    panel.innerHTML = tasks.map(t => `
+      <div class="task-item">
+        <div class="task-header">
+          <span>${t.agent ? AGENTS.find(a=>a.id===t.agent)?.emoji || '' : '📥'} ${t.title}</span>
+          <span class="task-status ${t.status}">${t.status.toUpperCase()}</span>
+        </div>
+        <div style="color:var(--dim)">${t.desc || ''}</div>
+      </div>
+    `).join('') || '<div style="color:var(--dim);font-size:8px;text-align:center;padding:40px">暫無任務</div>';
+  } else if (activeTab === 'log') {
+    panel.innerHTML = logs.slice(-50).reverse().map(l => `
+      <div class="log-item">
+        <span class="log-time">${l.time}</span>
+        <span class="log-msg">${l.msg}</span>
+      </div>
+    `).join('') || '<div style="color:var(--dim);font-size:8px;text-align:center;padding:40px">暫無記錄</div>';
+  } else if (activeTab === 'comms') {
+    panel.innerHTML = comms.slice(-50).reverse().map(c => `
+      <div class="log-item">
+        <span class="log-time">${c.time}</span>
+        <span class="log-from">${c.from}</span>
+        <span class="log-arrow">→</span>
+        <span class="log-to">${c.to}</span>
+        <div class="log-msg" style="margin-top:4px">${c.msg}</div>
+      </div>
+    `).join('') || '<div style="color:var(--dim);font-size:8px;text-align:center;padding:40px">暫無通訊</div>';
+  }
+}
+
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('zh-TW', { hour12: false });
+}
+
+// ── Tab Switching ──
+document.querySelectorAll('.panel-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeTab = tab.dataset.tab;
+    renderPanel();
+  });
+});
+
+// ── Mail Animation ──
+function showMail(fromEl, toEl) {
+  const mail = document.createElement('div');
+  mail.className = 'mail';
+  mail.textContent = '📨';
+  const fromRect = fromEl.getBoundingClientRect();
+  mail.style.left = fromRect.left + fromRect.width / 2 + 'px';
+  mail.style.top = fromRect.top + 'px';
+  document.body.appendChild(mail);
+  setTimeout(() => mail.remove(), 2000);
+}
+
+// ── API: Hermes Webhook (placeholder) ──
+async function fetchAgentStates() {
+  // This would connect to Hermes API
+  // For now, simulate with demo data
+}
+
+// ── Demo Mode ──
+function runDemo() {
+  const now = () => new Date().toLocaleTimeString('zh-TW', { hour12: false });
+
+  // Simulate agent activity
+  setTimeout(() => {
+    agentStates.boss = { status: 'working', task: '分析任務：咖啡廳社群貼文', tasksDone: 12 };
+    logs.push({ time: now(), msg: '🎩 老闆收到新任務：幫咖啡廳客戶做社群內容' });
+    buildAgents();
+    renderPanel();
+  }, 1000);
+
+  setTimeout(() => {
+    comms.push({ time: now(), from: '老闆 Boss', to: '墨子 Mozi', msg: '幫咖啡廳客戶產出 5 篇 IG 貼文' });
+    agentStates.mozi = { status: 'working', task: '撰寫咖啡廳 IG 貼文 x5', tasksDone: 28 };
+    logs.push({ time: now(), msg: '✍️ 墨子開始撰寫咖啡廳 IG 貼文' });
+    tasks.push({ title: '咖啡廳 IG 貼文 x5', desc: '5 篇季節主題貼文含 hashtag', agent: 'mozi', status: 'active' });
+    buildAgents();
+    renderPanel();
+    showMail(document.getElementById('card-boss'), document.getElementById('card-mozi'));
+  }, 2500);
+
+  setTimeout(() => {
+    agentStates.iris = { status: 'working', task: '設計咖啡廳視覺風格提案', tasksDone: 15 };
+    logs.push({ time: now(), msg: '🎨 彩虹開始設計咖啡廳視覺風格' });
+    tasks.push({ title: '咖啡廳視覺風格', desc: '3 種風格提案含色票', agent: 'iris', status: 'active' });
+    buildAgents();
+    renderPanel();
+  }, 4000);
+
+  setTimeout(() => {
+    agentStates.radar = { status: 'working', task: '分析競品：附近 3 家咖啡廳社群', tasksDone: 9 };
+    logs.push({ time: now(), msg: '🔍 雷達開始掃描競品社群策略' });
+    tasks.push({ title: '競品分析報告', desc: '附近 3 家咖啡廳 IG 策略分析', agent: 'radar', status: 'active' });
+    buildAgents();
+    renderPanel();
+  }, 5500);
+
+  setTimeout(() => {
+    agentStates.goldie = { status: 'working', task: '製作咖啡廳專案報價單', tasksDone: 7 };
+    comms.push({ time: now(), from: '老闆 Boss', to: '阿金 Goldie', msg: '這個案預算抓 NT$45,000，出報價單' });
+    logs.push({ time: now(), msg: '💰 阿金開始製作報價單' });
+    tasks.push({ title: '咖啡廳專案報價', desc: 'NT$45,000 品牌內容套餐', agent: 'goldie', status: 'active' });
+    buildAgents();
+    renderPanel();
+  }, 7000);
+
+  setTimeout(() => {
+    comms.push({ time: now(), from: '墨子 Mozi', to: '老闆 Boss', msg: '5 篇貼文完成，請 review' });
+    agentStates.mozi = { status: 'idle', task: null, tasksDone: 29 };
+    agentStates.boss = { status: 'working', task: '審核墨子的貼文產出', tasksDone: 12 };
+    tasks[0].status = 'done';
+    logs.push({ time: now(), msg: '✅ 墨子完成 5 篇貼文，交付老闆審核' });
+    buildAgents();
+    renderPanel();
+    showMail(document.getElementById('card-mozi'), document.getElementById('card-boss'));
+  }, 10000);
+
+  setTimeout(() => {
+    agentStates.pip = { status: 'working', task: '整理今日工作報告', tasksDone: 34 };
+    logs.push({ time: now(), msg: '📋 小管家開始整理今日報告' });
+    buildAgents();
+    renderPanel();
+  }, 12000);
+
+  setTimeout(() => {
+    logs.push({ time: now(), msg: '📊 今日報告：完成 3 件任務，2 件進行中，1 件待審核' });
+    renderPanel();
+  }, 15000);
+}
+
+// ── Init ──
+AGENTS.forEach(a => { agentStates[a.id] = { status: 'idle', task: null, tasksDone: Math.floor(Math.random()*30) }; });
+buildAgents();
+renderPanel();
+updateClock();
+setInterval(updateClock, 1000);
+
+// Start demo after 1s
+runDemo();
+</script>
+</body>
+</html>
