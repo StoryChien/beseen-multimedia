@@ -134,13 +134,13 @@ html { scroll-behavior: smooth; }
 .fade-in.visible {
   opacity: 1;
   transform: translateY(0);
+}
 /* Text gradient effect */
 .gradient-text {
   background: linear-gradient(135deg, var(--accent), #e8b400, #ff8c00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Fallback for older browsers */
   color: var(--accent);
 }
 
@@ -186,7 +186,7 @@ html { scroll-behavior: smooth; }
   width: 4px;
   height: 4px;
   background: var(--accent);
-  border-radius: float;
+  border-radius: 50%;
   opacity: 0.3;
   animation: float 6s ease-in-out infinite;
 }
@@ -223,14 +223,6 @@ html { scroll-behavior: smooth; }
 nav.scrolled {
   background: rgba(10,10,10,0.98);
   border-bottom-color: var(--accent);
-}
-
-/* Text gradient effect */
-.gradient-text {
-  background: linear-gradient(135deg, var(--accent), #e8b400, #ff8c00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Mobile */
