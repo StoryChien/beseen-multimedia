@@ -172,13 +172,13 @@ html { scroll-behavior: smooth; }
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 40%, rgba(245,197,24,0.05) 0%, transparent 80%);
+  background: radial-gradient(ellipse at 50% 40%, rgba(245,197,24,0.15) 0%, transparent 80%);
   animation: heroGlow 8s ease-in-out infinite alternate;
   pointer-events: none;
 }
 @keyframes heroGlow {
-  0% { opacity: 0.3; transform: scale(1); }
-  100% { opacity: 0.6; transform: scale(1.1); }
+  0% { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.1); }
 }
 
 /* Floating particles in hero */
