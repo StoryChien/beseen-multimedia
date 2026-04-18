@@ -4,13 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>本事多媒體 BeSeen Multimedia — 品牌故事創作</title>
+<meta name="description" content="影片剪輯、文案創作、AI 影像生成、音樂製作。本事多媒體用影像與策略，讓你的品牌被看見。">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <nav>
   <div class="container">
-    <a href="#" class="logo">本事<span>多媒體</span></a>
+    <a href="#" class="logo magnetic">
+      <svg class="logo-mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+        <circle cx="38" cy="52" r="30"/>
+        <circle cx="38" cy="52" r="10" fill="currentColor" stroke="none"/>
+        <path d="M 74 42 Q 84 52 74 62"/>
+        <path d="M 82 32 Q 96 52 82 72"/>
+        <circle cx="38" cy="16" r="3" fill="#C8A84B" stroke="none"/>
+      </svg>
+      <span class="logo-wordmark">本事<em>多媒體</em></span>
+    </a>
     <ul>
       <li><a href="#about">關於</a></li>
       <li><a href="#services">服務</a></li>
@@ -23,25 +33,20 @@
 
 <!-- Hero -->
 <section class="hero">
+  <div class="hero-bg" style="background-image:url('https://images.pexels.com/photos/23384400/pexels-photo-23384400.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=1080&amp;w=1920');"></div>
   <div class="hero-content">
-    <div class="hero-badge">Brand Story Studio</div>
-    <h1>
+    <div class="hero-badge" data-parallax="0.04">Brand Story Studio</div>
+    <h1 data-parallax="0.08">
       <span class="line gradient-text">用故事</span>
       <span class="line">讓品牌被看見</span>
     </h1>
-    <p>影片剪輯 ｜ 文案創作 ｜ AI 影像生成 ｜ 音樂製作</p>
-    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-      <a href="https://line.me/ti/p/G1rRvflCQE" class="btn btn-pulse" target="_blank" rel="noopener">立即洽詢</a>
-      <a href="portfolio.html" class="btn btn-outline">瀏覽作品集</a>
+    <p data-parallax="0.05">影片剪輯 ｜ 文案創作 ｜ AI 影像生成 ｜ 音樂製作</p>
+    <div class="hero-cta" data-parallax="0.03">
+      <a href="https://line.me/ti/p/G1rRvflCQE" class="btn btn-pulse magnetic" target="_blank" rel="noopener">立即洽詢</a>
+      <a href="portfolio.html" class="btn btn-outline magnetic">瀏覽作品集</a>
     </div>
   </div>
-  <div class="particle" style="left:10%;top:20%;animation-delay:0s;"></div>
-  <div class="particle" style="left:20%;top:60%;animation-delay:1s;"></div>
-  <div class="particle" style="left:80%;top:30%;animation-delay:2s;"></div>
-  <div class="particle" style="left:70%;top:70%;animation-delay:3s;"></div>
-  <div class="particle" style="left:40%;top:80%;animation-delay:4s;"></div>
-  <div class="particle" style="left:90%;top:50%;animation-delay:5s;"></div>
-  <div class="particle" style="left:5%;top:45%;animation-delay:6s;"></div>
+  <div class="hero-scroll-hint" aria-hidden="true">SCROLL</div>
 </section>
 
 <!-- About -->
@@ -83,22 +88,26 @@
     <p class="subtitle">一站式內容製作，從構想到成品</p>
     <div class="bento-grid">
       <div class="card fade-up fade-up-delay-1">
-        <div class="card-icon">🎬</div>
+        <div class="card-media" style="background-image:url('https://images.pexels.com/photos/11748185/pexels-photo-11748185.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=400&amp;w=600');"></div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="m17 10 4-2v8l-4-2z"/></svg>
         <h3>影片製作</h3>
         <p>品牌影片、短影音、廣告、教學影片，從腳本到後製一條龍。</p>
       </div>
       <div class="card fade-up fade-up-delay-2">
-        <div class="card-icon">✍️</div>
+        <div class="card-media" style="background-image:url('https://images.pexels.com/photos/4186911/pexels-photo-4186911.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=400&amp;w=600');"></div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-15.5z"/></svg>
         <h3>文案創作</h3>
         <p>社群貼文、廣告文案、品牌故事、產品描述，讓文字為你工作。</p>
       </div>
       <div class="card fade-up fade-up-delay-3">
-        <div class="card-icon">🎨</div>
+        <div class="card-media" style="background-image:url('https://images.pexels.com/photos/29534871/pexels-photo-29534871.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=400&amp;w=600');"></div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
         <h3>AI 影像</h3>
         <p>集成各家 AI 模型製作工作流程，產品圖、情境圖、品牌形象一次到位。</p>
       </div>
       <div class="card fade-up fade-up-delay-4">
-        <div class="card-icon">🎵</div>
+        <div class="card-media" style="background-image:url('https://images.pexels.com/photos/5749192/pexels-photo-5749192.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=400&amp;w=600');"></div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         <h3>音樂製作</h3>
         <p>品牌配樂、廣告音樂、Podcast 片頭，用 AI 打造專屬聲音。</p>
       </div>
@@ -111,9 +120,21 @@
   <div class="container">
     <h2 class="gradient-text">作品集</h2>
     <p class="subtitle">精選擁有超過 100+ 件作品，涵蓋多個產業</p>
-    <div class="portfolio-preview fade-up" style="text-align:center;">
-      <a href="portfolio.html" class="btn">瀏覽完整作品集 →</a>
+    <div class="portfolio-grid" style="margin-bottom:48px;">
+      <a href="portfolio.html" class="portfolio-item fade-up">
+        <div class="portfolio-thumb" style="background-image:url('https://images.pexels.com/photos/32403266/pexels-photo-32403266.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');"></div>
+        <div class="portfolio-meta"><h4>影像剪輯</h4><p>品牌影片、短影音、產品廣告</p><span class="portfolio-tag">Video</span></div>
+      </a>
+      <a href="portfolio.html" class="portfolio-item fade-up fade-up-delay-1">
+        <div class="portfolio-thumb" style="background-image:url('https://images.pexels.com/photos/7414917/pexels-photo-7414917.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');"></div>
+        <div class="portfolio-meta"><h4>網站作品</h4><p>房仲、健身、室內設計等在地產業</p><span class="portfolio-tag">Web</span></div>
+      </a>
+      <a href="portfolio.html" class="portfolio-item fade-up fade-up-delay-2">
+        <div class="portfolio-thumb" style="background-image:url('https://images.pexels.com/photos/29534871/pexels-photo-29534871.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=650&amp;w=940');"></div>
+        <div class="portfolio-meta"><h4>AI 影像</h4><p>產品情境圖、品牌形象、社群設計</p><span class="portfolio-tag">Image</span></div>
+      </a>
     </div>
+    <div style="text-align:center;"><a href="portfolio.html" class="btn magnetic">瀏覽完整作品集 →</a></div>
   </div>
 </section>
 
@@ -124,26 +145,26 @@
     <p class="subtitle">透明定價，按需選擇</p>
     <div class="bento-grid">
       <div class="card fade-up fade-up-delay-1">
-        <div class="card-icon">🎬</div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="m17 10 4-2v8l-4-2z"/></svg>
         <h3>影片剪輯</h3>
         <span class="price">NT$1,500</span>
         <p class="price-note">每分鐘</p>
         <p style="margin-top:12px;">品牌影片、短影音、廣告、教學影片</p>
       </div>
       <div class="card fade-up fade-up-delay-2">
-        <div class="card-icon">🌐</div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
         <h3>網站製作</h3>
         <span class="price">NT$30,000 起</span>
         <p class="price-note">5 個基本分頁，響應式設計</p>
       </div>
       <div class="card fade-up fade-up-delay-3">
-        <div class="card-icon">✍️</div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-15.5z"/></svg>
         <h3>社群文案</h3>
         <span class="price">NT$500</span>
         <p class="price-note">每篇 · 輪播圖卡 NT$100/張</p>
       </div>
       <div class="card fade-up fade-up-delay-4">
-        <div class="card-icon">🎨</div>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>
         <h3>AI 影像生成</h3>
         <span class="price">依需求報價</span>
         <p class="price-note">產品圖、情境圖、品牌形象</p>
@@ -188,7 +209,7 @@
       </div>
       <div class="contact-cta fade-up fade-up-delay-2">
         <p>用一個訊息，開始你的品牌故事</p>
-        <a href="https://line.me/ti/p/G1rRvflCQE" class="btn" target="_blank" rel="noopener">LINE 傳訊</a>
+        <a href="https://line.me/ti/p/G1rRvflCQE" class="btn magnetic" target="_blank" rel="noopener">LINE 傳訊</a>
       </div>
     </div>
   </div>
@@ -197,13 +218,12 @@
 <footer>
   <div class="container">
     <p>&copy; 2026 本事多媒體 BeSeen Multimedia. All rights reserved.</p>
+    <p class="credits">攝影素材由 <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a> 授權提供</p>
   </div>
 </footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
-  // Scroll-triggered fade-up animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -214,43 +234,26 @@ document.addEventListener('DOMContentLoaded', function() {
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // Nav scroll effect
   const nav = document.querySelector('nav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 50);
-  });
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
 
-  // Skill bar animation
   const skillObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('animate');
-        skillObserver.unobserve(entry.target);
-      }
+      if (entry.isIntersecting) { entry.target.classList.add('animate'); skillObserver.unobserve(entry.target); }
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('.skill').forEach(skill => skillObserver.observe(skill));
 
-  // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-      e.preventDefault();
       const targetId = this.getAttribute('href');
       if (targetId === '#') return;
       const target = document.querySelector(targetId);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     });
-  });
-
-  // Particle randomization
-  document.querySelectorAll('.hero .particle').forEach(p => {
-    const size = 2 + Math.random() * 4;
-    p.style.width = `${size}px`;
-    p.style.height = `${size}px`;
-    p.style.animationDuration = `${5 + Math.random() * 6}s`;
   });
 });
 </script>
-
+<script src="js/interactions.js"></script>
 </body>
 </html>
